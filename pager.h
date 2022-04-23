@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include <stdbool.h>
 
 #define PAGER_MAXIMUM_FRAMES 100
 #define PAGE_SIZE 4096
