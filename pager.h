@@ -4,12 +4,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
-#include <fcntl.h>
-#include <unistd.h>
-#include <stdbool.h>
-#include <errno.h>
-
-
 
 #define PAGER_MAXIMUM_FRAMES 100
 #define PAGE_SIZE 4096
