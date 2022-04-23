@@ -1,9 +1,5 @@
 #include "lexer.h"
 
-// #define TRAP_STATE 0
-// #define START_STATE 1
-// #define NUMBER_OF_STATES 2
-
 
 char number_of_states = 2;
 char number_of_accepting_states = 0;
