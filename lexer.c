@@ -5,7 +5,7 @@
 static char* keywords[4] = {"APPEND", "CREATE", "RECORD", "SELECT"};
 
 /* Build the DFA */
-
+/* The start state is 1, and trap state is 0 */
 
 static char keywords_dfa[26][26] = {0};
 static char keywords_accepting_states[4];
@@ -52,7 +52,7 @@ void create_keyword_dfa(){
     char number_of_states = 2;
     char number_of_accepting_states = 0;
     for(int i=0; i<4; i++){
-        int current_state = START_STATE;
+        int current_state = 1;
         while(*keywords[i] != '\0'){
             int index = *keywords[i] - 65;
             if(keywords_dfa[current_state][index] == 0){

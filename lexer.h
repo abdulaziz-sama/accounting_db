@@ -21,9 +21,6 @@ and probably will be rewritten from scratch in the future depending on how far
 I'll go in my learning journey.
 */
 
-#define TRAP_STATE 0
-#define START_STATE 1
-
 
 void create_keyword_dfa();
 Token* tokenize(char** start, char** advance);
