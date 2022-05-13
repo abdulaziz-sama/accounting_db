@@ -39,7 +39,7 @@ void flush_all_pages(Pager* pager);
 /* returns number of newly create page */
 uint32_t new_page(Pager* pager);
 
-unsigned char search_for_empty_frame(Pager* pager);
+int search_for_empty_frame(Pager* pager);
 void* get_frame_offset(Pager* pager, unsigned char frame_num);
 bool search_and_pin(Pager* pager, uint32_t page_num);
 void initialize_pagetable(Pager* pager);

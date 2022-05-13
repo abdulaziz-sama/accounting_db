@@ -10,7 +10,8 @@ COLON, COMMA} token_class;
 
 typedef struct Token {
     token_class class;
-    void* value;    
+    void* value;
+    struct Token* next;
 } Token;
 
 
