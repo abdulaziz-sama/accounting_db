@@ -246,11 +246,13 @@ Token* tokenize(char** start, char** advance){
        if(keyword_dfa_accepted){
            token->class = get_keyword(value);
            token->value = NULL;
+           token->next = NULL;
            free(value);
        } 
        else if(previous_accepting_dfas == punctuation_accept){
            token->class = get_punctuation(value);
            token->value = NULL;
+           token->next = NULL;
            free(value);
        } 
        else {
@@ -258,6 +260,7 @@ Token* tokenize(char** start, char** advance){
            get away with this */
            token->class = previous_accepting_dfas;
            token->value = value;
+           token->next = NULL;
        }
 
         return token;
