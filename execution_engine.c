@@ -17,6 +17,16 @@ void execute_append(Q_Node* root, Pager* pager){
     }
 
 
+    // delete from here
+
+    Table* tbl = malloc(sizeof(Table));
+    tbl->table_place = result[0];
+    tbl->table_row_id_value = result[2];
+    tbl->pager = pager;
+
+    // to here
+
+
     int root_frame;
     void* node = NULL;
 
@@ -26,11 +36,27 @@ void execute_append(Q_Node* root, Pager* pager){
         root_frame = fetch_page(pager, new_page_number);
         node = get_frame_offset(pager, root_frame);
         initialize_leaf_node(node);
+        set_node_root(node, true);
         set_table_root_page_num(catalog, new_page_number, result[0]);
+        //delete from here
+        tbl->table_root_page = new_page_number;
+
+
+        //to here
     } else {
         root_frame = fetch_page(pager, result[1]);
         node = get_frame_offset(pager, root_frame);
+        tbl->table_root_page = result[1];
     }
+
+
+    //delete from here
+
+
+    Cursor* cursor = table_find(tbl, tbl->table_row_id_value);
+
+    // to here
+
 
     
     void* record = malloc(70);
@@ -39,27 +65,23 @@ void execute_append(Q_Node* root, Pager* pager){
     strncpy(record + CREDIT_ACCOUNT_OFFSET, root->node.q1.credit_account->name, 31);
     memcpy(record + CREDIT_ACCOUNT_VALUE_OFFSET, root->node.q1.credit_value->value, 4);
 
-
-    uint32_t* row_number = leaf_node_num_cells(node);
-    if(*row_number >= LEAF_NODE_MAX_CELLS){
-        printf("need to implement splitting node\n");
-        close_db(pager);
-    }
+    leaf_node_insert(cursor, tbl->table_row_id_value, record);
 
 
-    memcpy(leaf_node_cell(node, *row_number), &result[2], sizeof(uint32_t));
-    memcpy(leaf_node_value(node, *row_number), record, 70);
+    // memcpy(leaf_node_cell(node, *row_number), &result[2], sizeof(uint32_t));
+    // memcpy(leaf_node_value(node, *row_number), record, 70);
 
-    // increment the number of cells count in leaf node
-    *leaf_node_num_cells(node) += 1;
 
-    pager->frame_data[root_frame].dirty = 1;
+    // pager->frame_data[root_frame].dirty = 1;
 
     // increment the row ID for table in the catalog
     set_table_record_id(catalog, result[2] + 1, result[0]);
 
     pager->frame_data[catalog_frame].dirty = 1;
-    
+
+    free(tbl);
+    free(cursor);
+    free(result);    
 }
 
 
@@ -84,25 +106,44 @@ void execute_select(Q_Node* root, Pager* pager){
         return;
     }
 
-    int root_frame = fetch_page(pager, result[1]);
-    void* node = get_frame_offset(pager, root_frame);
-    
-    uint32_t num_cells = *leaf_node_num_cells(node);
+    Table* tbl = malloc(sizeof(Table));
+    tbl->table_place = result[0];
+    tbl->table_root_page = result[1];
+    tbl->table_row_id_value = result[2];
+    tbl->pager = pager;
 
-    printf("number of cells: %u\n", num_cells);
+
+    Cursor* cursor = table_start(tbl);
+
+
+    // int root_frame = fetch_page(pager, result[1]);
+    // void* node = get_frame_offset(pager, root_frame);
+    
+    // uint32_t num_cells = *leaf_node_num_cells(node);
 
     char* debit_acc, *credit_acc;
     uint32_t* debit_val, *credit_val;
+    void* cursor_val;
 
-    for(uint32_t i=0; i< num_cells; i++){
-        printf("Key: %u\n", *leaf_node_key(node, i));
-        debit_acc = (char*)leaf_node_value(node, i);
-        debit_val = leaf_node_value(node, i) + DEBIT_ACCOUNT_VALUE_OFFSET;
-        credit_acc = (char*)(leaf_node_value(node, i) + CREDIT_ACCOUNT_OFFSET);
-        credit_val = leaf_node_value(node, i) + CREDIT_ACCOUNT_VALUE_OFFSET;
+    while (!(cursor->end_of_table)) {
+        cursor_val = cursor_value(cursor);
+        printf("Key: %u\n", *((uint32_t*)cursor_val));
+        debit_acc = (char*)(cursor_val + LEAF_NODE_KEY_SIZE);
+        debit_val = (uint32_t*)(cursor_val + LEAF_NODE_KEY_SIZE + DEBIT_ACCOUNT_VALUE_OFFSET);
+        credit_acc = (char*)(cursor_val + LEAF_NODE_KEY_SIZE + CREDIT_ACCOUNT_OFFSET);
+        credit_val = (uint32_t*)(cursor_val + LEAF_NODE_KEY_SIZE + CREDIT_ACCOUNT_VALUE_OFFSET);
         printf("{%s:%u, %s:%u}\n", debit_acc, *debit_val, credit_acc, *credit_val);
+
+        cursor_advance(cursor);
     }
     
+    free(tbl);
+    free(cursor);
+    free(result);
+}
+
+void execute_select_record(Q_Node* root, Pager* pager){
+    printf("Implement execute selecting record here.\n");
 }
 
 void execute_create(Q_Node* root, Pager* pager){
@@ -135,6 +176,11 @@ void execute_create(Q_Node* root, Pager* pager){
 
 }
 
+void execute_delete_record(Q_Node* root, Pager* pager){
+    printf("Implement execute deleting record here.\n");
+}
+
+
 void execute(Q_Node* root, Pager* pager){
     switch (root->tag)
     {
@@ -146,6 +192,12 @@ void execute(Q_Node* root, Pager* pager){
         break;
     case 2:
         execute_create(root, pager);
+        break;
+    case 3:
+        execute_select_record(root, pager);
+        break;
+    case 4:
+        execute_delete_record(root, pager);
         break;
     }
 }

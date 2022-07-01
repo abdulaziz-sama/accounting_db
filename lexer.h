@@ -6,7 +6,7 @@
 #include <string.h>
 
 typedef enum {APPEND, CREATE, ID, RECORD, NUMBER, SELECT, OPEN_PAREN, CLOSE_PAREN,
-COLON, COMMA} token_class;
+COLON, COMMA, DELETE, FROM} token_class;
 
 typedef struct Token {
     token_class class;

@@ -86,6 +86,31 @@ bool analyseQ3(Q_Node* root){
     } else return true;
 }
 
+bool analyseQ4(Q_Node* root){
+    // check if rowid is unsigned int
+    void* check_rowid = is_unsigned_int(root->node.q4.rowid->value);
+    if(!check_rowid){
+        printf("Rowid value is out of bound.\n");
+        return false;
+    } else {
+        root->node.q4.rowid->value = check_rowid;
+        return true;
+    }
+}
+
+bool analyseQ5(Q_Node* root){
+    // check if rowid is unsigned int
+    void* check_rowid = is_unsigned_int(root->node.q5.rowid->value);
+    if(!check_rowid){
+        printf("Rowid value is out of bound.\n");
+        return false;
+    } else {
+        root->node.q5.rowid->value = check_rowid;
+        return true;
+    }
+}
+
+
 bool analyseQ(Q_Node* root){
     int nodeType = root->tag;
 
@@ -94,7 +119,11 @@ bool analyseQ(Q_Node* root){
     case 0:
         return analyseQ1(root);
     case 2:
-        return analyseQ3(root);   
+        return analyseQ3(root);
+    case 3:
+        return analyseQ4(root);
+    case 4:
+        return analyseQ5(root);   
     default:
         return true;   
     }

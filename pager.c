@@ -54,9 +54,9 @@ Pager* create_pager(char* filename){
     pager->page_table_size = pager->num_pages * 2; 
     pager->page_table = page_table;       
   } else {
-    /* else malloc 10 entries */
-    char* page_table = malloc(sizeof(char) * 10);
-    pager->page_table_size = 10;    
+    /* else malloc 20 entries */
+    char* page_table = malloc(sizeof(char) * 20);
+    pager->page_table_size = 20;    
     pager->page_table = page_table;
   }
   initialize_pagetable(pager);
@@ -71,7 +71,7 @@ that corresponds to the same value in page_table[page_num], then pin and return 
 int search_and_pin(Pager* pager, uint32_t page_num){
 
   if(pager->page_table[page_num] >= 0){
-    printf("implement pinning and referencing here.\n");
+    // printf("implement pinning and referencing here.\n");
     return pager->page_table[page_num];
   }
   else {

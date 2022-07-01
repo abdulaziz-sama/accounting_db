@@ -7,7 +7,7 @@
 #include <stdbool.h>
 #include "lexer.h"
 
-typedef enum {Q1_TYPE, Q2_TYPE, Q3_TYPE} NodeType;
+typedef enum {Q1_TYPE, Q2_TYPE, Q3_TYPE, Q4_TYPE, Q5_TYPE} NodeType;
 
 typedef struct numExpr {
     void* value;
@@ -46,12 +46,31 @@ typedef struct Q3_Node {
     idExpr* table_name;
 } Q3_Node;
 
+typedef struct Q4_Node {
+    TokenNode* select;
+    TokenNode* from;
+    idExpr* table_name;
+    TokenNode* record;
+    numExpr* rowid;
+} Q4_Node;
+
+typedef struct Q5_Node {
+    TokenNode* delete;
+    TokenNode* from;
+    idExpr* table_name;
+    TokenNode* record;
+    numExpr* rowid;
+} Q5_Node;
+
+
 typedef struct Q_Node {
     NodeType tag;
     union {
         Q1_Node q1;
         Q2_Node q2;
         Q3_Node q3;
+        Q4_Node q4;
+        Q5_Node q5;
     } node;
 
 } Q_Node;
@@ -61,6 +80,14 @@ The grammar:
 Q   -> APPEND RECORD {ID : NUM , ID : NUM} ID
     | SELECT ID
     | CREATE ID
+
+Updated grammar (will be modified in the future and more Non-terminal will be added):
+Q   -> APPEND RECORD {ID : NUM , ID : NUM} ID
+    | SELECT ID
+    | CREATE ID
+    | SELECT FROM ID RECORD NUM
+    | DELETE FROM ID RECORD NUM
+    
 */
 
 Q_Node* Q(Token* token);

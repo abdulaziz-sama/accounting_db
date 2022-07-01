@@ -2,13 +2,13 @@
 
 /* A DFA for the language {CREATE, APPEND, SELECT, RECORD} */
 
-static char* keywords[4] = {"APPEND", "CREATE", "RECORD", "SELECT"};
+static char* keywords[6] = {"APPEND", "CREATE", "RECORD", "SELECT", "DELETE", "FROM"};
 
 /* Build the DFA */
 /* The start state is 1, and trap state is 0 */
 
-static char keywords_dfa[26][26] = {0};
-static char keywords_accepting_states[4];
+static char keywords_dfa[36][26] = {0};
+static char keywords_accepting_states[6];
 
 
 /*
@@ -51,7 +51,7 @@ void create_keyword_dfa(){
 
     char number_of_states = 2;
     char number_of_accepting_states = 0;
-    for(int i=0; i<4; i++){
+    for(int i=0; i<6; i++){
         int current_state = 1;
         while(*keywords[i] != '\0'){
             int index = *keywords[i] - 65;
@@ -77,6 +77,8 @@ int get_keyword(char* keyword){
     else if(strcmp(keyword, "CREATE") == 0) return CREATE;
     else if(strcmp(keyword, "RECORD") == 0) return RECORD;
     else if(strcmp(keyword, "SELECT") == 0) return SELECT;
+    else if(strcmp(keyword, "DELETE") == 0) return DELETE;
+    else if(strcmp(keyword, "FROM") == 0) return FROM;
 }
 
 int get_punctuation(char* punctuation){
@@ -140,7 +142,7 @@ Token* tokenize(char** start, char** advance){
             bit that represent keyword dfa = 0, meaning it doesn't accept it.
             */
            int accepted_by_keyword = 0;
-            for(int i=0; i<4; i++){
+            for(int i=0; i<6; i++){
                 if(keywords_current_state == keywords_accepting_states[i]){
                     accepted_by_keyword = 1;
                     break;

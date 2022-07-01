@@ -103,6 +103,7 @@ int main(int argc, char* argv[]){
             }
         }
 
+
         if(parse_tree){
             execute(parse_tree, pager);    
         }
